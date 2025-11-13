@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Node* insert(struct Node* head, int data, int pos) {
+    struct Node* newNode = createNode(data);
+
+    if (pos == 1) {
+        newNode->next = head;
+        head = newNode;
+        return head;
+    }
+
+    struct Node* temp = head;
+    for (int i = 1; temp != NULL && i < pos - 1; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        if (head == NULL) {
+            head = newNode;
+            return head;
+        }
+        temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = newNode;
+    } else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+    return head;
+}
+
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+void sortList(struct Node* head) {
+    if (head == NULL) return;
+    struct Node* i, *j;
+    int temp;
+    for (i = head; i->next != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            if (i->data > j->data) {
+                temp = i->data;
+                i->data = j->data;
+                j->data = temp;
+            }
+        }
+    }
+}
+
+struct Node* reverseList(struct Node* head) {
+    struct Node* prev = NULL;
+    struct Node* current = head;
+    struct Node* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+struct Node* concatenate(struct Node* head1, struct Node* head2) {
+    if (head1 == NULL) return head2;
+    struct Node* temp = head1;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = head2;
+    return head1;
+}
+
+int main() {
+    struct Node* list1 = NULL;
+    struct Node* list2 = NULL;
+    struct Node* mergedList = NULL;
+    int choice, data, pos, n;
+
+
+    printf("Enter number of elements in List1: ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++) {
+        printf("Enter element %d: ", i);
+        scanf("%d", &data);
+        list1 = insert(list1, data, i);
+    }
+
+    printf("List1: ");
+    display(list1);
+
+
+    printf("Enter number of elements in List2: ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++) {
+        printf("Enter element %d: ", i);
+        scanf("%d", &data);
+        list2 = insert(list2, data, i);
+    }
+
+    printf("List2: ");
+    display(list2);
+
+    do {
+        printf("\n--- MENU ---\n");
+        printf("1. Sort List1\n");
+        printf("2. Reverse List1\n");
+        printf("3. Concatenate List1 and List2\n");
+        printf("4. Display List1\n");
+        printf("5. Display List2\n");
+        printf("6. Display Merged List\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                sortList(list1);
+                printf("Sorted List1: ");
+                display(list1);
+                break;
+            case 2:
+                list1 = reverseList(list1);
+                printf("Reversed List1: ");
+                display(list1);
+                break;
+            case 3:
+                mergedList = concatenate(list1, list2);
+                printf("Concatenated List: ");
+                display(mergedList);
+                break;
+            case 4:
+                printf("List1: ");
+                display(list1);
+                break;
+            case 5:
+                printf("List2: ");
+                display(list2);
+                break;
+            case 6:
+                if (mergedList != NULL) {
+                    printf("Merged List: ");
+                    display(mergedList);
+                } else {
+                    printf("Merged List not created yet. Choose option 3 first.\n");
+                }
+                break;
+            case 0:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    } while(choice != 0);
+
+    return 0;
+}
